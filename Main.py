@@ -18,6 +18,6 @@ chromagram, fs_chromagram = Chroma_Detection.get_chromagram(filepath)
 
 recurrence_plot = Segmentation_Detection.detect_segmentation(chromagram,fs_chromagram)
 
-pyp.imshow(recurrence_plot,aspect='auto')
+pyp.imshow(recurrence_plot)
 pyp.title('Recurrence Plot for ' + songs[song_num])
 pyp.show()
