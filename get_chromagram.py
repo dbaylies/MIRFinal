@@ -12,11 +12,6 @@ def get_chromagram(filepath):
     N_fft = 8192
     bin_freqs, sample_times, Zxx = signal.stft(x_t, fs, window=np.hanning(N_fft), nperseg=N_fft) # Overlap defaults to nperseg/2
 
-    # pyp.imshow(abs(Zxx),aspect='auto',origin='lower',extent=[sample_times[0],sample_times[-1],bin_freqs[0],bin_freqs[-1]])
-    # pyp.xlabel('Time (seconds)')
-    # pyp.ylabel('Frequency (Hz)')
-    # pyp.show()
-
     # Generate center frequencies
     bins_per_octave = 12
     num_octaves = 4 # Why can't this go any higher?
@@ -51,22 +46,9 @@ def get_chromagram(filepath):
         win_norm = win/np.sum(win)
         filterbank_matrix[i,win_start:win_end+1] = win_norm
 
-    # Display filterbank matrix
-    # pyp.imshow(filterbank_matrix, origin="lower", aspect="auto")
-    # pyp.title('Filterbank')
-    # pyp.xlabel('DFT bin')
-    # pyp.ylabel('Note bin')
-    # pyp.show()
-
     # Apply filterbank to get log-frequency spectrum
 
     log_freq_spectrum = np.matmul(filterbank_matrix,Zxx)
-
-    # Display log frequency matrix
-    # pyp.imshow(abs(log_freq_spectrum),aspect='auto',origin='lower',extent=[sample_times[0],sample_times[-1],0,bins_per_octave * num_octaves])
-    # pyp.xlabel('Time (seconds)')
-    # pyp.ylabel('Note number')
-    # pyp.show()
 
     # Sum across octaves
     chromagram = np.zeros((bins_per_octave,len(sample_times)))
@@ -82,7 +64,5 @@ def get_chromagram(filepath):
     pyp.yticks(np.arange(12)+0.5, ['A','A#','B','C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'])
     pyp.title('Chromagram for ' + filepath)
     pyp.show()
-
-    # Gaussian (removes harmonic noise) and/or median (removes transients) filter??
 
     return chromagram, fs_chromagram
