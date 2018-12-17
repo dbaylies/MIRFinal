@@ -1,8 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as pyp
 import numpy.linalg as linalg
+from sklearn.neighbors import NearestNeighbors
 
 def detect_segmentation(chromagram, fs_chromagram):
+
+    # Parameters
+    kappa = 0.1
+
 
     (num_notes,num_samps) = chromagram.shape
 
@@ -22,11 +27,12 @@ def detect_segmentation(chromagram, fs_chromagram):
     # pyp.imshow(x_delay,aspect='auto',origin='lower')
     # pyp.show()
 
+    #################################
     ### Calculate recurrence plot ###
+    #################################
 
     # Create cosine similarity matrix for k-NN step
-
-    # cos_sim = np.zeros((num_samps, num_samps))
+    # TODO: implement Serra et al.'s method instead (norm of difference between vectors)
 
     dot_prod = np.matmul(np.transpose(x_delay), x_delay)
 
@@ -36,6 +42,22 @@ def detect_segmentation(chromagram, fs_chromagram):
 
     mag_matrix = np.matmul(np.transpose(mags), mags)
 
-    cos_sim = np.divide(dot_prod, mag_matrix)
+    cos_sim = np.divide(dot_prod, mag_matrix, out=np.zeros_like(mag_matrix), where=mag_matrix != 0)
 
-    return mag_matrix
+    # find nearest neighbors
+    recurrence = np.zeros((N, N))
+
+    K = round(kappa * N)
+
+    neighbors = np.zeros((K, N))
+
+    # Matrix with indices of K nearest neighbors for each sample
+    for i in np.arange(N):
+        neighbors[:, i] = np.argsort(abs(cos_sim[:, i]), axis=0)[-K:].flatten()
+
+    for i in np.arange(N):
+        for j in np.arange(N):
+            if j in neighbors[:, i] and i in neighbors[:, j]:
+                recurrence[i, j] = 1
+
+    return recurrence

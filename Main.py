@@ -4,17 +4,20 @@ import Chroma_Detection
 import Segmentation_Detection
 import os
 
-filepaths = os.listdir('../Audio/01_-_Please_Please_Me/')
+root = '../Audio/'
+album_num = 2
+song_num = 2
 
-# filepath = '../Audio/01_-_Please_Please_Me/01_-_I_Saw_Her_Standing_There.wav'
-# filepath = '../Audio/01_-_Please_Please_Me/02_-_Misery.wav'
-# filepath = '../Audio/T08-violin.wav'
+albums = os.listdir(root)
 
-filepath = '../Audio/01_-_Please_Please_Me/' + filepaths[13]
+songs = os.listdir(root + albums[album_num])
+
+filepath = root + albums[album_num] + '/' + songs[song_num]
 
 chromagram, fs_chromagram = Chroma_Detection.get_chromagram(filepath)
 
 recurrence_plot = Segmentation_Detection.detect_segmentation(chromagram,fs_chromagram)
 
-pyp.imshow(recurrence_plot,aspect='auto',origin='lower')
+pyp.imshow(recurrence_plot,aspect='auto')
+pyp.title('Recurrence Plot for ' + songs[song_num])
 pyp.show()
