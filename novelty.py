@@ -1,18 +1,22 @@
 import numpy as np
 import numpy.linalg as linalg
 import matplotlib.pyplot as pyp
+import scipy.signal as signal
 
 
 def novelty(P):
 
     # Get novelty curve
-    c = linalg.norm(np.diff(P), axis=1)
+    c = linalg.norm(np.diff(P), axis=0)
 
     # normalize
-    c = (c - np.min(c))
-    c = c/np.max(c)
+    c = (c - np.amin(c))
+    c = c/np.amax(c)
 
-    pyp.imshow(np.diff(P))
-    pyp.show()
+    # c = signal.medfilt(c,33)
+
+    pyp.figure()
+    pyp.plot(c)
+    pyp.title('novelty curve')
 
     return c

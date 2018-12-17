@@ -6,13 +6,13 @@ import numpy.linalg as linalg
 def recurrence_matrix(chromagram, fs_chromagram):
 
     # Parameters
-    kappa = 0.1
+    kappa = 0.05
 
     (num_notes, num_samps) = chromagram.shape
 
     # The default parameters here follow the suggestions of Serra et al.
     tau = 1
-    look_back = 2  # seconds
+    look_back = 5  # seconds
     w = round(fs_chromagram * look_back)
     m = round(w/tau + 1)
     N = num_samps-w  # Length of new chroma matrix
@@ -56,5 +56,11 @@ def recurrence_matrix(chromagram, fs_chromagram):
         for j in np.arange(N):
             if j in neighbors[:, i] and i in neighbors[:, j]:
                 recurrence[i, j] = 1
+
+    pyp.figure()
+    pyp.imshow(recurrence)
+    pyp.title('Recurrence matrix')
+    pyp.xlabel('Sample number')
+    pyp.ylabel('Sample number')
 
     return N, recurrence

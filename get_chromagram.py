@@ -2,19 +2,20 @@ import numpy as np
 import scipy.signal as signal
 import soundfile as sf
 import matplotlib.pyplot as pyp
-import matplotlib.colors as colors
+
 
 def get_chromagram(filepath):
+
     # Read in file
     x_t, fs = sf.read(filepath)
 
     # Generate stft
-    N_fft = 8192
-    bin_freqs, sample_times, Zxx = signal.stft(x_t, fs, window=np.hanning(N_fft), nperseg=N_fft) # Overlap defaults to nperseg/2
+    N_fft = 16384
+    bin_freqs, sample_times, Zxx = signal.stft(x_t, fs, window=np.hanning(N_fft), nperseg=N_fft)  # Overlap defaults to nperseg/2
 
     # Generate center frequencies
     bins_per_octave = 12
-    num_octaves = 4 # Why can't this go any higher?
+    num_octaves = 8
     f_min = 55 # Hz - A1
     bin_indices = np.arange(bins_per_octave * num_octaves)
     bin_center_freqs = f_min * (2 ** (bin_indices / bins_per_octave))
@@ -59,10 +60,9 @@ def get_chromagram(filepath):
 
     fs_chromagram = fs/(N_fft/2)
 
-    normInst = colors.Normalize()
-    pyp.imshow(abs(chromagram), aspect='auto', origin='lower', norm=normInst,extent=[sample_times[0],sample_times[-1],0,bins_per_octave])
+    pyp.figure()
+    pyp.imshow(abs(chromagram), aspect='auto', origin='lower',extent=[sample_times[0],sample_times[-1],0,bins_per_octave])
     pyp.yticks(np.arange(12)+0.5, ['A','A#','B','C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'])
     pyp.title('Chromagram for ' + filepath)
-    pyp.show()
 
     return chromagram, fs_chromagram
