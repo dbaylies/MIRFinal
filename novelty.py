@@ -4,7 +4,7 @@ import matplotlib.pyplot as pyp
 import scipy.signal as signal
 
 
-def novelty(P):
+def novelty(P, plot):
 
     # Get novelty curve
     c = linalg.norm(np.diff(P), axis=0)
@@ -15,8 +15,9 @@ def novelty(P):
 
     # c = signal.medfilt(c,33)
 
-    pyp.figure()
-    pyp.plot(c)
-    pyp.title('novelty curve')
+    if plot:
+        pyp.figure()
+        pyp.plot(c)
+        pyp.title('novelty curve')
 
     return c

@@ -3,7 +3,7 @@ import matplotlib.pyplot as pyp
 import numpy.linalg as linalg
 
 
-def recurrence_matrix(chromagram, fs_chromagram):
+def recurrence_matrix(chromagram, fs_chromagram, plot):
 
     # Parameters
     kappa = 0.05
@@ -22,6 +22,11 @@ def recurrence_matrix(chromagram, fs_chromagram):
     for embed in np.arange(m):
         x_delay[num_notes*embed:num_notes*(embed+1), :] = \
             chromagram[:, (w - tau * embed):(w - tau * embed + N)]
+
+    pyp.figure()
+    pyp.imshow(x_delay, aspect='auto')
+    pyp.title('Delay matrix')
+    pyp.xlabel('Sample number')
 
     #################################
     ### Calculate recurrence plot ###
@@ -57,10 +62,11 @@ def recurrence_matrix(chromagram, fs_chromagram):
             if j in neighbors[:, i] and i in neighbors[:, j]:
                 recurrence[i, j] = 1
 
-    pyp.figure()
-    pyp.imshow(recurrence)
-    pyp.title('Recurrence matrix')
-    pyp.xlabel('Sample number')
-    pyp.ylabel('Sample number')
+    if plot:
+        pyp.figure()
+        pyp.imshow(recurrence)
+        pyp.title('Recurrence matrix')
+        pyp.xlabel('Sample number')
+        pyp.ylabel('Sample number')
 
-    return N, recurrence
+    return N, recurrence, look_back

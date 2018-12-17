@@ -2,15 +2,15 @@ import numpy as np
 import scipy.signal as signal
 import matplotlib.pyplot as pyp
 
-def peak_pick(c, fs):
+def peak_pick(c, fs_chromagram, look_back, seg_times, plot):
 
-
-    # w_c = 4/((fs)/2)
-    medfilt_len = 17
-    offset = 0.03
+    # parameters
+    w_c = 0.05
+    medfilt_len = 33
+    offset = 0.01
 
     # design 1st order butterworth
-    b, a = signal.butter(1, 0.2)
+    b, a = signal.butter(1, w_c)
 
     # apply filter
     n_t_smoothed = signal.filtfilt(b, a, c)
@@ -32,10 +32,22 @@ def peak_pick(c, fs):
     onset_a = c[[ndarray]]
 
     # Get times of detected onsets
-    onset_t = ndarray * (1/fs)
+    onset_t = ndarray * (1 / fs_chromagram)
 
-    pyp.plot(n_t_norm)
-    pyp.plot(ndarray,onset_a,'ro')
-    pyp.title('Smoothed novelty plot and found peaks')
+    # Add time offset from lag matrix step
+    onset_t = onset_t + look_back/2
+
+    seg_times = np.array(seg_times)
+
+    # Remove lookback offset
+    seg_times = seg_times - look_back/2
+    seg_times = seg_times * fs_chromagram
+
+    if plot:
+        pyp.plot(n_t_norm)
+        pyp.plot(ndarray, onset_a, 'ro')
+        for xc in seg_times:
+            pyp.axvline(x=xc)
+        pyp.title('Smoothed novelty plot and found peaks')
 
     return onset_a, onset_t

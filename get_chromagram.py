@@ -4,7 +4,7 @@ import soundfile as sf
 import matplotlib.pyplot as pyp
 
 
-def get_chromagram(filepath):
+def get_chromagram(filepath, plot):
 
     # Read in file
     x_t, fs = sf.read(filepath)
@@ -60,9 +60,10 @@ def get_chromagram(filepath):
 
     fs_chromagram = fs/(N_fft/2)
 
-    pyp.figure()
-    pyp.imshow(abs(chromagram), aspect='auto', origin='lower',extent=[sample_times[0],sample_times[-1],0,bins_per_octave])
-    pyp.yticks(np.arange(12)+0.5, ['A','A#','B','C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'])
-    pyp.title('Chromagram for ' + filepath)
+    if plot:
+        pyp.figure()
+        pyp.imshow(abs(chromagram), aspect='auto', origin='lower',extent=[sample_times[0],sample_times[-1],0,bins_per_octave])
+        pyp.yticks(np.arange(12)+0.5, ['A','A#','B','C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'])
+        pyp.title('Chromagram for ' + filepath)
 
     return chromagram, fs_chromagram

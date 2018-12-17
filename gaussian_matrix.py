@@ -4,7 +4,7 @@ import scipy.ndimage as ndimage
 import matplotlib.pyplot as pyp
 
 
-def gaussian_matrix(fs_chromagram, L):
+def gaussian_matrix(fs_chromagram, L, plot):
 
     # Gaussian kernel lengths
     s_l_sec = 0.5 # seconds
@@ -26,19 +26,22 @@ def gaussian_matrix(fs_chromagram, L):
 
     G = np.matmul(np.transpose(g_l),g_t)
 
-    pyp.figure()
-    pyp.plot(signal.gaussian(s_t,std_dev_t))
-    pyp.title('g_t')
+    if plot:
+        pyp.figure()
+        pyp.plot(signal.gaussian(s_t,std_dev_t))
+        pyp.title('g_t')
 
-    pyp.figure()
-    pyp.imshow(G, aspect='auto')
-    pyp.title('Gaussian Kernel')
+    if plot:
+        pyp.figure()
+        pyp.imshow(G, aspect='auto')
+        pyp.title('Gaussian Kernel')
 
     # Convolve L with Gaussian kernel
     P = ndimage.convolve(L, G, mode='constant')
 
-    pyp.figure()
-    pyp.imshow(P)
-    pyp.title('Smoothed Time-Lag Matrix')
+    if plot:
+        pyp.figure()
+        pyp.imshow(P)
+        pyp.title('Smoothed Time-Lag Matrix')
 
     return P
